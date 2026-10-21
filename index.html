@@ -113,6 +113,7 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--text);
 "use strict";
 var API = "https://webapi.gogoro.com/api/vm/list";
 var SOURCES = [
+  "stations.json",
   API,
   "https://wapi.gogoro.com/tw/api/vm/list",
   "https://api.allorigins.win/raw?url=" + encodeURIComponent(API),
@@ -132,9 +133,16 @@ function setStatus(t){ $("status").textContent = t; }
 // ---------- map ----------
 var last = prefs.last || [25.0478, 121.5170];
 var map = L.map("map", {zoomControl:false, preferCanvas:true, attributionControl:true}).setView(last, 16);
-L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-  maxZoom:19, subdomains:"abcd", attribution:"© OpenStreetMap © CARTO"
+var esri = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
+  maxZoom:19, maxNativeZoom:18, attribution:"© Esri"
 }).addTo(map);
+// fall back to OpenStreetMap tiles if the default map keeps failing
+var tileErrors = 0;
+esri.on("tileerror", function(){
+  if (++tileErrors !== 8) return;
+  map.removeLayer(esri);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom:19, attribution:"© OpenStreetMap"}).addTo(map);
+});
 var stationLayer = L.layerGroup().addTo(map);
 var renderer = L.canvas({padding:0.3});
 
