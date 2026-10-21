@@ -185,7 +185,7 @@ function normalize(json){
 function useStations(list, srcLabel){
   stations = list;
   updateDataInfo(srcLabel);
-  drawStations();
+  drawStations(true);
   updateList();
 }
 function updateDataInfo(src){
@@ -234,14 +234,16 @@ function initData(){
 }
 
 // ---------- drawing (only what is on screen) ----------
-var drawPending = false;
-function drawStations(){
+var drawPending = false, drawnBounds = null, drawnZoom = null;
+function drawStations(force){
+  if (force !== true && drawnBounds && drawnZoom === map.getZoom() && drawnBounds.contains(map.getBounds())) return;
   if (drawPending) return; drawPending = true;
   requestAnimationFrame(function(){
     drawPending = false;
     stationLayer.clearLayers();
     if (!stations.length) return;
-    var b = map.getBounds().pad(0.25), z = map.getZoom();
+    var b = map.getBounds().pad(0.5), z = map.getZoom();
+    drawnBounds = b; drawnZoom = z;
     var icons = z >= 14, r = z >= 13 ? 6 : 4, cap = icons ? 400 : 1500;
     var n = 0;
     for (var i=0;i<stations.length;i++){
@@ -251,7 +253,7 @@ function drawStations(){
       var m = icons
         ? L.marker([s.lat, s.lng], {icon:boltIcon, keyboard:false})
         : L.circleMarker([s.lat, s.lng], {renderer:renderer, radius:r, weight:1.5, color:"#ffffff", fillColor:"#1b1f24", fillOpacity:1});
-      m.bindPopup(popupHtml(s), {autoPan:false}).addTo(stationLayer);
+      m.on("click", openStation.bind(null, s)).addTo(stationLayer);
     }
   });
 }
@@ -263,6 +265,21 @@ function popupHtml(s){
     (s.time ? "<br>營業:" + esc(s.time) : "") + "<br><a href='" + navUrl(s) + "' target='_blank' rel='noopener'>導航前往 →</a>";
 }
 map.on("moveend zoomend", drawStations);
+
+// a station popup pauses map following until it is closed, so there is time to tap 導航
+var popupOpen = false;
+function openStation(s){
+  L.popup({autoPan:false, closeOnClick:true}).setLatLng([s.lat, s.lng]).setContent(popupHtml(s)).openOn(map);
+}
+var popupTimer = null;
+map.on("popupopen", function(){
+  popupOpen = true; clearTimeout(popupTimer);
+  popupTimer = setTimeout(function(){ map.closePopup(); }, 20000);
+});
+map.on("popupclose", function(){
+  popupOpen = false; clearTimeout(popupTimer);
+  if (follow && here) map.panTo([here.lat, here.lng]);
+});
 
 // ---------- geo math ----------
 var R = 6371000, rad = Math.PI/180;
@@ -300,10 +317,10 @@ function onFix(lat, lng, acc, spd, hdg){
     if (heading != null){ arrow.style.display = "block"; arrow.style.transform = "rotate(" + heading + "deg)"; }
     else arrow.style.display = "none";
   }
-  if (follow) map.panTo([lat,lng], {animate:true, duration:0.5, noMoveStart:true});
+  if (follow && !popupOpen) map.panTo([lat,lng], {animate:true, duration:0.5, noMoveStart:true});
 
   $("speed").textContent = (spd != null && !isNaN(spd) ? Math.round(spd*3.6) : "—") + " km/h";
-  setStatus("定位中 · 精準度 " + Math.round(acc||0) + " m");
+  setStatus(follow ? "跟隨中 · 精準度 " + Math.round(acc||0) + " m" : "已暫停跟隨,15 秒後自動回到你的位置");
   prefs.last = [lat, lng];
   if (!onFix.saved || Date.now() - onFix.saved > 30000){ onFix.saved = Date.now(); savePrefs(); }
   throttledList();
@@ -363,9 +380,8 @@ function updateList(){
       '</b><small>' + esc(c.s.addr || c.s.city) + '</small></span><a class="go" target="_blank" rel="noopener" href="' + navUrl(c.s) + '">導航</a>';
     li.addEventListener("click", function(e){
       if (e.target.closest("a")) return;
-      setFollow(false);
-      map.setView([c.s.lat, c.s.lng], Math.max(map.getZoom(), 16));
-      L.popup({autoPan:false}).setLatLng([c.s.lat, c.s.lng]).setContent(popupHtml(c.s)).openOn(map);
+      map.setView([c.s.lat, c.s.lng], Math.max(map.getZoom(), 16), {animate:false});
+      openStation(c.s);
     });
     ul.appendChild(li);
   });
@@ -375,11 +391,19 @@ $("modeBtn").onclick = function(){
 };
 
 // ---------- follow controls ----------
+var RESUME_MS = 15000, resumeTimer = null;
 function setFollow(on){
   follow = on; $("followBtn").classList.toggle("on", on);
-  if (on && here) map.setView([here.lat, here.lng], Math.max(map.getZoom(), 15));
+  clearTimeout(resumeTimer);
+  if (on){ map.closePopup(); if (here) map.setView([here.lat, here.lng], Math.max(map.getZoom(), 15)); }
+  else setStatus("已暫停跟隨,15 秒後自動回到你的位置");
+  if (!on) resumeTimer = setTimeout(function(){ if (!popupOpen) setFollow(true); else setFollow(false); }, RESUME_MS);
 }
-map.on("dragstart", function(){ setFollow(false); });
+// small bumps of the finger shouldn't stop following; a real drag pauses it for 15 seconds
+map.on("dragend", function(e){
+  if (e.distance > 40) setFollow(false);
+  else if (follow && here && !popupOpen) map.panTo([here.lat, here.lng]);
+});
 $("followBtn").onclick = function(){ setFollow(true); };
 map.on("moveend", function(){ if (!here) throttledList(); });
 
