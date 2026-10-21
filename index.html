@@ -14,6 +14,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet-rotate@0.2.8/dist/leaflet-rotate.js"></script>
 <style>
 :root{
   --bg:#f4f6f8; --panel:rgba(255,255,255,.95); --text:#1b2530; --muted:#66758a;
@@ -81,6 +82,10 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--text);
   <button class="fab on" id="followBtn" title="跟隨我">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8"/></svg>
   </button>
+  <button class="fab" id="headBtn" title="行進方向朝上">
+    <svg viewBox="0 0 24 24" id="headIcon"><path d="M12 2l5 10h-10z" fill="#e5484d"/><path d="M12 22l-5-10h10z" fill="currentColor" opacity=".55"/></svg>
+    <span id="headTxt" style="font-size:10px">前方</span>
+  </button>
   <button class="fab" id="menuBtn" title="設定">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
   </button>
@@ -127,7 +132,8 @@ function setStatus(t){ $("status").textContent = t; }
 
 // ---------- map ----------
 var last = prefs.last || [25.0478, 121.5170];
-var map = L.map("map", {zoomControl:false, preferCanvas:true, attributionControl:true, touchZoom:"center", scrollWheelZoom:"center", doubleClickZoom:"center"}).setView(last, 16);
+var map = L.map("map", {zoomControl:false, preferCanvas:true, attributionControl:true, touchZoom:"center", scrollWheelZoom:"center", doubleClickZoom:"center",
+  rotate:true, bearing:0, rotateControl:false, touchRotate:false, shiftKeyRotate:false, compassBearing:false}).setView(last, 16);
 var esri = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
   maxZoom:19, maxNativeZoom:18, attribution:"© Esri"
 }).addTo(map);
@@ -235,14 +241,21 @@ function initData(){
 
 // ---------- drawing (only what is on screen) ----------
 var drawPending = false, drawnBounds = null, drawnZoom = null;
+// bounds of the circle around the screen, so the area stays covered whichever way the map is turned
+function viewBounds(){
+  var c = map.getCenter(), size = map.getSize(), z = map.getZoom();
+  var m = Math.hypot(size.x, size.y) / 2 * 40075016.686 * Math.cos(c.lat * Math.PI / 180) / Math.pow(2, z + 8);
+  var dLat = m / 111320, dLng = m / (111320 * Math.cos(c.lat * Math.PI / 180));
+  return L.latLngBounds([c.lat - dLat, c.lng - dLng], [c.lat + dLat, c.lng + dLng]);
+}
 function drawStations(force){
-  if (force !== true && drawnBounds && drawnZoom === map.getZoom() && drawnBounds.contains(map.getBounds())) return;
+  if (force !== true && drawnBounds && drawnZoom === map.getZoom() && drawnBounds.contains(viewBounds())) return;
   if (drawPending) return; drawPending = true;
   requestAnimationFrame(function(){
     drawPending = false;
     stationLayer.clearLayers();
     if (!stations.length) return;
-    var b = map.getBounds().pad(0.5), z = map.getZoom();
+    var b = viewBounds().pad(0.4), z = map.getZoom();
     drawnBounds = b; drawnZoom = z;
     var icons = z >= 14, r = z >= 13 ? 6 : 4, cap = icons ? 400 : 1500;
     var n = 0;
@@ -269,7 +282,7 @@ map.on("moveend zoomend", drawStations);
 // a station popup pauses map following until it is closed, so there is time to tap 導航
 var popupOpen = false;
 function openStation(s){
-  L.popup({autoPan:false, closeOnClick:true}).setLatLng([s.lat, s.lng]).setContent(popupHtml(s)).openOn(map);
+  L.popup({autoPan:true, autoPanPaddingTopLeft:[10,70], autoPanPaddingBottomRight:[80,240], closeOnClick:true}).setLatLng([s.lat, s.lng]).setContent(popupHtml(s)).openOn(map);
 }
 var popupTimer = null;
 map.on("popupopen", function(){
@@ -297,6 +310,7 @@ function fmtDist(m){ return m < 1000 ? Math.round(m/10)*10 + " m" : (m/1000).toF
 
 // ---------- location tracking ----------
 var here = null, heading = null, prevFix = null, follow = true;
+var headingUp = prefs.headingUp !== false, hasRotate = typeof map.setBearing === "function";
 var listMode = prefs.listMode || "near", watchId = null, lastFixAt = 0, demoTimer = null;
 
 function onFix(lat, lng, acc, spd, hdg){
@@ -312,11 +326,7 @@ function onFix(lat, lng, acc, spd, hdg){
     accCircle = L.circle([lat,lng], {radius:acc||20, color:"#2f8cff", weight:1, fillOpacity:.08, interactive:false}).addTo(map);
   } else { meMarker.setLatLng([lat,lng]); accCircle.setLatLng([lat,lng]).setRadius(acc||20); }
 
-  var arrow = document.getElementById("meArrow");
-  if (arrow){
-    if (heading != null){ arrow.style.display = "block"; arrow.style.transform = "rotate(" + heading + "deg)"; }
-    else arrow.style.display = "none";
-  }
+  applyHeading();
   if (follow && !popupOpen) map.panTo([lat,lng], {animate:true, duration:0.5, noMoveStart:true});
 
   $("speed").textContent = (spd != null && !isNaN(spd) ? Math.round(spd*3.6) : "—") + " km/h";
@@ -390,12 +400,37 @@ $("modeBtn").onclick = function(){
   listMode = listMode === "ahead" ? "near" : "ahead"; prefs.listMode = listMode; savePrefs(); updateList();
 };
 
+// ---------- heading-up: turn the map so the direction of travel points to the top ----------
+function mapBearing(){ return hasRotate ? map.getBearing() : 0; }
+function applyHeading(){
+  if (hasRotate){
+    // with leaflet-rotate a direction d shows on screen at angle d + bearing, so bearing = -heading puts it on top
+    var want = (headingUp && follow && heading != null) ? (360 - heading) % 360 : (headingUp ? mapBearing() : 0);
+    var diff = ((want - mapBearing()) + 540) % 360 - 180;
+    if (Math.abs(diff) > 4 || (!headingUp && mapBearing() !== 0)) map.setBearing(want);
+  }
+  var arrow = document.getElementById("meArrow");
+  if (arrow){
+    if (heading != null){ arrow.style.display = "block"; arrow.style.transform = "rotate(" + (heading + mapBearing()) + "deg)"; }
+    else arrow.style.display = "none";
+  }
+  // compass button: red tip shows where north is
+  $("headIcon").style.transform = "rotate(" + mapBearing() + "deg)";
+  $("headBtn").classList.toggle("on", headingUp);
+  $("headTxt").textContent = headingUp ? "前方" : "北方";
+}
+if (!hasRotate) $("headBtn").style.display = "none";
+$("headBtn").onclick = function(){
+  headingUp = !headingUp; prefs.headingUp = headingUp; savePrefs(); applyHeading();
+  if (here && follow) map.panTo([here.lat, here.lng]);
+};
+
 // ---------- follow controls ----------
 var RESUME_MS = 15000, resumeTimer = null;
 function setFollow(on){
   follow = on; $("followBtn").classList.toggle("on", on);
   clearTimeout(resumeTimer);
-  if (on){ map.closePopup(); if (here) map.setView([here.lat, here.lng], map.getZoom()); }
+  if (on){ map.closePopup(); applyHeading(); if (here) map.setView([here.lat, here.lng], map.getZoom()); }
   else setStatus("已暫停跟隨,15 秒後自動回到你的位置");
   if (!on) resumeTimer = setTimeout(function(){ if (!popupOpen) setFollow(true); else setFollow(false); }, RESUME_MS);
 }
@@ -459,8 +494,9 @@ $("demoBtn").onclick = function(){
 };
 
 // expose for automated testing
-window.__gs = {onFix:onFix, useStations:useStations, normalize:normalize, state:function(){ return {follow:follow, here:here, heading:heading, n:stations.length, center:map.getCenter()}; }};
+window.__gs = {map:map, onFix:onFix, useStations:useStations, normalize:normalize, state:function(){ return {follow:follow, here:here, heading:heading, n:stations.length, center:map.getCenter()}; }};
 
+applyHeading();
 initData();
 startWatch();
 })();
