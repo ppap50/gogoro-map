@@ -1,77 +1,13 @@
-=== https://www.gogoro.com/tw/findus/
-src="//code.jquery.com/jquery-3.6.0.min.js"
-src="//cdn.gogoro.com/libs/ggr-components/8-latest/ggr-components.min.js?v=f9f01c8507d7e3b45871c497199134a971849a5c4445db7ec967042554bd504e"
-src="//cdn.gogoro.com/libs/ggr-find-us/latest/ggr-find-us.min.js"
---- https://code.jquery.com/jquery-3.6.0.min.js 89501
---- https://cdn.gogoro.com/libs/ggr-components/8-latest/ggr-components.min.js?v=f9f01c8507d7e3b45871c497199134a971849a5c4445db7ec967042554bd504e 450052
-"/api/me responded "
-"/tw/event/2022swap/"
-"/tw/findus/?station"
-"GoStation® and Smart Battery"
-"apiDomain"
-"https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;700;900&display=swap"
-"https://www.gogoro.com/api/geo"
-http://promotion.gogoro.com/
-http://www.bohemiancoding.com/sketch
-http://www.w3.org/1998/Math/MathML
-http://www.w3.org/1999/xlink
-http://www.w3.org/2000/svg
-https://bit.ly/37hvlKK
-https://castrolmobility.com/vi
-https://cdn.gogoro.com/libs/ggr
-https://inquire.gogoro.com/tw/inquire
-https://investor.gogoro.com/
-https://network.gogoro.com/tw/
-https://promotion.gogoro.com/tw/
-https://promotion.gogoro.com/tw/gov
-https://promotion.gogoro.com/tw/subscription/
-https://reserve.gogoro.com/
-https://shop.gogoro.com/
-https://store.gogoro.com/tw/legal/SmartscooterPurchaseAgreement_1001
-https://support.gogoro.com/en/
-https://support.gogoro.com/en/faq/
-https://support.gogoro.com/en/manual/collections/7879070047644964/
-https://support.gogoro.com/tw/
-https://support.gogoro.com/tw/faq
-https://support.gogoro.com/tw/giftquery
-https://support.gogoro.com/tw/giftquery/
-https://support.gogoro.com/tw/how
-https://twitter.com/WeAreGogoro
-https://vuejs.org/error
-https://www.facebook.com/GogoroIndia/
-https://www.facebook.com/GogoroTaiwan
-https://www.facebook.com/gogoro
-https://www.gogoro.com/api/geo
-https://www.gogoro.com/cookie
-https://www.gogoro.com/privacy
-https://www.gogoro.com/tw/explore
-https://www.gogoro.com/tw/privacy
-https://www.gogoro.com/tw/rewards/
-https://www.instagram.com/gogoro_in/
-https://www.instagram.com/gogoro_taiwan/
-https://www.linkedin.com/company/gogoro
-https://www.ridegoshare.com/
---- https://cdn.gogoro.com/libs/ggr-find-us/latest/ggr-find-us.min.js 691606
-":{searchBar:{placeholder:{station:`Find a nearby GoStation®`,"
-":{searchBar:{placeholder:{station:`尋找 GoStation®`,"
-"https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;700;900&display=swap"
-http://momentjs.com/guides/
-http://www.w3.org/1998/Math/MathML
-http://www.w3.org/1999/xlink
-http://www.w3.org/2000/svg
-https://api.apifly.io/tables/1rq19mAHusw4bUie
-https://api.apifly.io/tables/3zF3F6HiiGxbdEj5
-https://cdn.gogoro.com/data/environmental
-https://cdn.gogoro.com/data/findus
-https://maps.googleapis.com/maps/api/js
-https://next.vuex.vuejs.org/
-https://npms.io/search
-https://official-site-pro.gogoroapp.com/
-https://vuejs.org/error
-https://vuejs.org/images/icons/favicon
-https://www.gogoro.com/privacy
-https://www.gogoro.com/terms
-https://www.gogoro.com/tw/privacy
-https://www.gogoro.com/tw/terms
-https://www.google.com.tw/maps/dir//
-"application/ld+json"
+##### official-site-pro
+`zh-TW`,fallbackLocale:`zh-TW`,messages:Wv,silentTranslationWarn:!0,silentFallbackWarn:!0}),XT=e=>{let t=JT[e];if(!t){let n=e.split(`-`)[0];n===`zh`?t=`zh-TW`:n===`en`&&(t=`en-US`)}YT.global.locale.value=t,J.locale(t)},ZT=Nm.create({baseURL:`https://official-site-pro.gogoroapp.com/`}),QT=async()=>(await ZT.get(`PartnerService/Gogoro/GetVmList?offset=0&pageSize=10000`)).data.Data,$T=async e=>(await ZT.get(`PartnerService/Gogoro/GetGoStationImages?VmId=${e}`)).data.map(e=>e.URL),eE={"zh-TW":{fullTime:`24 小時營業`,tom
+##### gogoroapp.com
+cale:`zh-TW`,messages:Wv,silentTranslationWarn:!0,silentFallbackWarn:!0}),XT=e=>{let t=JT[e];if(!t){let n=e.split(`-`)[0];n===`zh`?t=`zh-TW`:n===`en`&&(t=`en-US`)}YT.global.locale.value=t,J.locale(t)},ZT=Nm.create({baseURL:`https://official-site-pro.gogoroapp.com/`}),QT=async()=>(await ZT.get(`PartnerService/Gogoro/GetVmList?offset=0&pageSize=10000`)).data.Data,$T=async e=>(await ZT.get(`PartnerService/Gogoro/GetGoStationImages?VmId=${e}`)).data.map(e=>e.URL),eE={"zh-TW":{fullTime:`24 小時營業`,tomorrow:`明日`,wee
+##### data/findus
+w C,swapCount:new w,swapCountAvg30Days:new ee,rackCount:new T},{get:function(e,t,n){return O.boostrap(),Reflect.get(e,t,n)}})),document.readyState===`loading`?document.addEventListener(`DOMContentLoaded`,m):m(),O})}))(),1),kE=`https://cdn.gogoro.com/data/findus-cluster.json`,AE=`https://cdn.gogoro.com/data/findus-shops.json`,jE=Pm.default.chain(cE.state).pick([`station`,`shop`,`service`,`super-station`,`promo`,`quick_service`]).keys().first().value(),$=Cd({state:()=>({shops:[],stations:[],promoCenters:[],q
+##### apiDomain
+##### /vm
+IHQDiNIlpkadUVEUlPl9CroW3lGxgdy4pclWvKTePLqiLoUCLKAK6qKAovvNEajPLQWUxwFAp2nNxKgLgy3KkvcAqFHCKbgxS7OeMd/0Jc5koCNKREo6IkgY18onSt3TCxFLRxTpVDM59iWcdr+sUwAFNEo4kb+0NIJKrUl0Wt2msfCnSZPTku8y0YEgDfWgAPQGjETWcE5JFHSMBdAb0DLlAqZFhm0KVmu9zb8aACo2Wb3B7HOtl5RmrW/vmPnuNrSUma+YuXqS/iRp8oeeuzYDZEk9aACaBo5633TOUg9hyLkCsKnGx4RwClKVjXtmthyyqsFIgC4pjZ9VXK1Wq4oXN+LQalfMy9VqY9MjnSQN3fEiE20sUAwc3Aj9Adk46ssB50gBuj8g0/hsSrSnxoVCpFvCqRZNAl7j07A04parr9rVtb1n/uryLevnin8g8zXdxIv8p0iTz/ioELqJWeU+MGSTkso1P5IwJE2/TUamrPOE6B5H4Q0
+##### swap-station
+##### station/list
+##### /stations
+##### getStation
