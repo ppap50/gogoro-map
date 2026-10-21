@@ -127,7 +127,7 @@ function setStatus(t){ $("status").textContent = t; }
 
 // ---------- map ----------
 var last = prefs.last || [25.0478, 121.5170];
-var map = L.map("map", {zoomControl:false, preferCanvas:true, attributionControl:true}).setView(last, 16);
+var map = L.map("map", {zoomControl:false, preferCanvas:true, attributionControl:true, touchZoom:"center", scrollWheelZoom:"center", doubleClickZoom:"center"}).setView(last, 16);
 var esri = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
   maxZoom:19, maxNativeZoom:18, attribution:"© Esri"
 }).addTo(map);
@@ -395,7 +395,7 @@ var RESUME_MS = 15000, resumeTimer = null;
 function setFollow(on){
   follow = on; $("followBtn").classList.toggle("on", on);
   clearTimeout(resumeTimer);
-  if (on){ map.closePopup(); if (here) map.setView([here.lat, here.lng], Math.max(map.getZoom(), 15)); }
+  if (on){ map.closePopup(); if (here) map.setView([here.lat, here.lng], map.getZoom()); }
   else setStatus("已暫停跟隨,15 秒後自動回到你的位置");
   if (!on) resumeTimer = setTimeout(function(){ if (!popupOpen) setFollow(true); else setFollow(false); }, RESUME_MS);
 }
