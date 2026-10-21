@@ -19,9 +19,15 @@ def fetch():
         try:
             req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
             with urllib.request.urlopen(req, timeout=60) as r:
-                return json.load(r)["data"]
+                raw = r.read()
+                try:
+                    return json.loads(raw)["data"]
+                except Exception:
+                    print(f"::warning::{url} unexpected body: {raw[:300]!r}")
+                    raise
         except Exception as e:
-            print(f"{url} failed: {e}")
+            body = getattr(e, "read", lambda: b"")()[:200]
+            print(f"::warning::{url} failed: {e!r} {body!r}")
     raise SystemExit("all sources failed")
 
 
