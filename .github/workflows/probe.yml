@@ -13,10 +13,8 @@ jobs:
       - run: |
           UA="Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/130 Mobile Safari/537.36"
           mkdir -p /tmp/p && cd /tmp/p
-          curl -sS -L -m 60 -A "$UA" https://cdn.gogoro.com/libs/ggr-find-us/latest/ggr-find-us.min.js -o f.js
-          for k in official-site-pro gogoroapp.com data/findus apiDomain /vm "swap-station" "station/list" "/stations" getStation; do
-            echo "##### $k" >> out.txt
-            grep -oE ".{0,250}$k.{0,250}" f.js | head -6 >> out.txt
-          done
+          curl -sS -m 60 -A "$UA" -H "Origin: https://www.gogoro.com" -D h.txt "https://official-site-pro.gogoroapp.com/PartnerService/Gogoro/GetVmList?offset=0&pageSize=10000" -o d.json
+          cat h.txt > out.txt
+          python3 -c "import json;d=json.load(open('d.json'));print(type(d), list(d)[:10] if isinstance(d,dict) else '');a=d['Data'];print(len(a));print(json.dumps(a[:2],ensure_ascii=False)[:3000])" >> out.txt 2>&1
           cp out.txt $GITHUB_WORKSPACE/probe-out.txt
           cd $GITHUB_WORKSPACE && git config user.name bot && git config user.email bot@users.noreply.github.com && git add probe-out.txt && git commit -m "probe output" && git push
