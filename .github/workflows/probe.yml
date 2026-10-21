@@ -13,18 +13,10 @@ jobs:
       - run: |
           UA="Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/130 Mobile Safari/537.36"
           mkdir -p /tmp/p && cd /tmp/p
-          for base in https://www.gogoro.com/tw/findus/; do
-            curl -sS -L -m 30 -A "$UA" "$base" -o page.html
-            echo "=== $base" >> out.txt
-            grep -oE '(src|href)="[^"]*\.js[^"]*"' page.html >> out.txt
-            for js in $(grep -oE 'src="[^"]*\.js[^"]*"' page.html | sed 's/src="//;s/"$//'); do
-              case "$js" in //*) js="https:$js";; /*) js="$(echo $base | cut -d/ -f1-3)$js";; http*) ;; *) js="$base$js";; esac
-              curl -sS -L -m 30 -A "$UA" "$js" -o f.js || continue
-              echo "--- $js $(wc -c < f.js)" >> out.txt
-              grep -oE '"[^"]{0,120}(api|/vm|station|GoStation|swap)[^"]{0,120}"' f.js | sort -u | grep -v "^\"\.\|capitalize" | head -80 >> out.txt
-              grep -oE "https?://[A-Za-z0-9.-]+\.[a-z]+/[A-Za-z0-9/_.{}$-]*" f.js | grep -v fonts | sort -u | head -40 >> out.txt
-            done
+          curl -sS -L -m 60 -A "$UA" https://cdn.gogoro.com/libs/ggr-find-us/latest/ggr-find-us.min.js -o f.js
+          for k in official-site-pro gogoroapp.com data/findus apiDomain /vm "swap-station" "station/list" "/stations" getStation; do
+            echo "##### $k" >> out.txt
+            grep -oE ".{0,250}$k.{0,250}" f.js | head -6 >> out.txt
           done
-          grep -oE '"[^"]{0,200}(api|json)[^"]{0,200}"' page.html | head -30 >> out.txt
           cp out.txt $GITHUB_WORKSPACE/probe-out.txt
           cd $GITHUB_WORKSPACE && git config user.name bot && git config user.email bot@users.noreply.github.com && git add probe-out.txt && git commit -m "probe output" && git push
