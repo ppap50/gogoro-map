@@ -1,0 +1,17 @@
+name: probe
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/probe.yml"]
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          UA="Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/130 Mobile Safari/537.36"
+          for u in https://www.gogoro.com/tw/api/vm/list https://wapi.gogoro.com/api/vm/list https://wapi.gogoro.com/tw/api/vm/list/ https://network.gogoro.com/tw/ https://www.gogoro.com/tw/gogoro-network/ https://www.gogoro.com/tw/gogoro-network/stations/ https://network.gogoro.com/api/vm/list; do
+            r=$(curl -sS -L -m 30 -A "$UA" -o /tmp/b -w "%{http_code} %{content_type} %{url_effective}" "$u" 2>&1)
+            echo "::warning::$u -> $r :: $(head -c 150 /tmp/b | tr -d '\r\n' | tr -c '[:print:]' ' ')"
+            grep -oE "https?://[A-Za-z0-9.-]*gogoro[A-Za-z0-9.-]*/[A-Za-z0-9/_.?=&-]*(api|vm|station|swap)[A-Za-z0-9/_.?=&-]*" /tmp/b | sort -u | head -15 | tr '\n' ' ' | sed 's/^/::warning::links /'; echo
+            grep -oE "src=\"[^\"]*\.js[^\"]*\"" /tmp/b | head -8 | tr '\n' ' ' | sed 's/^/::warning::js /'; echo
+          done
