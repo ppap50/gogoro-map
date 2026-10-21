@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>換電站地圖</title>
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="換電站">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+:root{
+  --bg:#f4f6f8; --panel:rgba(255,255,255,.95); --text:#1b2530; --muted:#66758a;
+  --accent:#16a34a; --accent-ink:#ffffff; --me:#2f8cff; --warn:#ffb020; --danger:#ff5a5f;
+  --line:rgba(0,0,0,.1); --card:#ffffff; --btn:#eef1f4;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;overflow:hidden}
+#map{position:fixed;inset:0;background:#e8ecef}
+.top{position:fixed;left:12px;right:12px;top:calc(env(safe-area-inset-top) + 10px);z-index:1000;
+  display:flex;gap:8px;align-items:center;pointer-events:none}
+.pill{box-shadow:0 2px 8px rgba(0,0,0,.12);pointer-events:auto;background:var(--panel);border:1px solid var(--line);border-radius:999px;
+  padding:8px 14px;font-size:14px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+#status{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#speed{font-variant-numeric:tabular-nums;font-weight:700}
+.fabs{position:fixed;right:12px;bottom:calc(env(safe-area-inset-bottom) + 240px);z-index:1000;display:flex;flex-direction:column;gap:10px}
+.fab{box-shadow:0 2px 8px rgba(0,0,0,.15);width:56px;height:56px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--text);
+  font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-direction:column;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);cursor:pointer;line-height:1.1}
+.fab svg{width:24px;height:24px}
+.fab.on{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:1000;background:var(--panel);border-top:1px solid var(--line);
+  border-radius:18px 18px 0 0;padding:10px 14px calc(env(safe-area-inset-bottom) + 10px);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.sheet h2{margin:0 0 6px;font-size:13px;font-weight:600;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.sheet h2 button{background:none;border:0;color:var(--accent);font:inherit;padding:0;cursor:pointer}
+#list{list-style:none;margin:0;padding:0;max-height:150px;overflow:auto}
+#list li{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line);cursor:pointer}
+#list li:first-child{border-top:0}
+.dist{min-width:62px;font-weight:800;font-size:18px;font-variant-numeric:tabular-nums;color:var(--accent)}
+.nm{flex:1;min-width:0}
+.nm b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nm small{color:var(--muted);font-size:12px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.go{background:var(--accent);color:var(--accent-ink);border:0;border-radius:10px;padding:8px 10px;font-weight:700;font-size:13px;text-decoration:none}
+.empty{color:var(--muted);font-size:14px;padding:8px 0}
+.st{filter:drop-shadow(0 1px 2px rgba(0,0,0,.3))}
+.me-wrap{width:40px;height:40px;position:relative}
+.me-dot{position:absolute;left:12px;top:12px;width:16px;height:16px;border-radius:50%;background:var(--me);border:3px solid #fff;box-shadow:0 0 0 6px rgba(47,140,255,.25)}
+.me-arrow{position:absolute;left:0;top:0;width:40px;height:40px;transition:transform .3s linear}
+.me-arrow:before{content:"";position:absolute;left:14px;top:-2px;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:12px solid var(--me)}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--card);color:var(--text)}
+.leaflet-popup-content{margin:12px 14px;font-size:14px;line-height:1.45}
+.leaflet-popup-content a{color:var(--accent)}
+.leaflet-container a.leaflet-popup-close-button{color:var(--muted)}
+.dlg{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:16px}
+.dlg.show{display:flex}
+.dlg .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;max-width:420px;width:100%;font-size:14px;line-height:1.6}
+.dlg h3{margin:0 0 8px}
+.dlg .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.btn{background:var(--btn);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font:inherit;cursor:pointer}
+.btn.pri{background:var(--accent);color:var(--accent-ink);border-color:transparent;font-weight:700}
+.muted{color:var(--muted)}
+</style>
+</head>
+<body>
+<div id="map"></div>
+
+<div class="top">
+  <div class="pill" id="status">準備中…</div>
+  <div class="pill" id="speed">— km/h</div>
+</div>
+
+<div class="fabs">
+  <button class="fab on" id="followBtn" title="跟隨我">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8"/></svg>
+  </button>
+  <button class="fab" id="menuBtn" title="設定">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+</div>
+
+<div class="sheet">
+  <h2><span id="listTitle">附近換電站</span><button id="modeBtn">切換:前方</button></h2>
+  <ul id="list"><li class="empty">等待定位…</li></ul>
+</div>
+
+<div class="dlg" id="dlg">
+  <div class="card">
+    <h3>設定與資料</h3>
+    <div id="dataInfo" class="muted">—</div>
+    <div class="row">
+      <button class="btn pri" id="reloadBtn">重新下載站點</button>
+      <label class="btn">匯入 JSON 檔<input type="file" id="fileIn" accept=".json,application/json,text/plain" hidden></label>
+    </div>
+    <p class="muted" style="margin:12px 0 0">若下載失敗:用瀏覽器打開 <a href="https://webapi.gogoro.com/api/vm/list" target="_blank" rel="noopener" style="color:var(--accent)">Gogoro 站點清單</a>,存成檔案後在這裡「匯入」。資料會存在手機裡,沒網路也能用。</p>
+    <div class="row">
+      <label class="btn"><input type="checkbox" id="wakeChk" checked> 騎乘時螢幕不關</label>
+      <button class="btn" id="demoBtn">模擬騎車(測試)</button>
+    </div>
+    <div class="row"><button class="btn" id="closeDlg">關閉</button></div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var API = "https://webapi.gogoro.com/api/vm/list";
+var SOURCES = [
+  API,
+  "https://wapi.gogoro.com/tw/api/vm/list",
+  "https://api.allorigins.win/raw?url=" + encodeURIComponent(API),
+  "https://corsproxy.io/?url=" + encodeURIComponent(API)
+];
+var CACHE_KEY = "gs_stations_v1", CACHE_TIME = "gs_stations_time_v1", PREF_KEY = "gs_prefs_v1";
+var REFRESH_MS = 3 * 24 * 3600 * 1000;
+
+function store(k, v){ try{ localStorage.setItem(k, v); return true; }catch(e){ return false; } }
+function load(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+var prefs = {}; try{ prefs = JSON.parse(load(PREF_KEY) || "{}") || {}; }catch(e){ prefs = {}; }
+function savePrefs(){ store(PREF_KEY, JSON.stringify(prefs)); }
+
+var $ = function(id){ return document.getElementById(id); };
+function setStatus(t){ $("status").textContent = t; }
+
+// ---------- map ----------
+var last = prefs.last || [25.0478, 121.5170];
+var map = L.map("map", {zoomControl:false, preferCanvas:true, attributionControl:true}).setView(last, 16);
+L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+  maxZoom:19, subdomains:"abcd", attribution:"© OpenStreetMap © CARTO"
+}).addTo(map);
+var stationLayer = L.layerGroup().addTo(map);
+var renderer = L.canvas({padding:0.3});
+
+var meIcon = L.divIcon({className:"", iconSize:[40,40], iconAnchor:[20,20],
+  html:'<div class="me-wrap"><div class="me-arrow" id="meArrow" style="display:none"></div><div class="me-dot"></div></div>'});
+var boltIcon = L.divIcon({className:"st", iconSize:[34,34], iconAnchor:[17,17],
+  html:'<svg viewBox="0 0 34 34" width="34" height="34"><circle cx="17" cy="17" r="15" fill="#fff" stroke="#1b1f24" stroke-width="2.5"/><path d="M19.5 6.5 10 19h6l-2 8.5L23.5 15h-6z" fill="#1b1f24"/></svg>'});
+var meMarker = null, accCircle = null;
+
+// ---------- station data ----------
+var stations = [];
+function pick(v){
+  if (v == null) return "";
+  if (typeof v === "string"){
+    var s = v.trim();
+    if (s.charAt(0) === "{"){ try{ v = JSON.parse(s); }catch(e){ return s; } } else return s;
+  }
+  var list = v && (v.List || v.list);
+  if (Array.isArray(list)){
+    var zh = list.filter(function(x){ return /zh/i.test(x.Lang || x.lang || ""); })[0] || list[0];
+    return zh ? (zh.Value || zh.value || "") : "";
+  }
+  return String(v);
+}
+function normalize(json){
+  var arr = Array.isArray(json) ? json : (json && (json.data || json.Data)) || [];
+  var out = [];
+  for (var i=0;i<arr.length;i++){
+    var d = arr[i], lat = +(d.Latitude || d.latitude || d.lat), lng = +(d.Longitude || d.longitude || d.lng || d.lon);
+    if (!isFinite(lat) || !isFinite(lng) || !lat || !lng) continue;
+    out.push({
+      id: d.Id || d.id || i, lat: lat, lng: lng,
+      name: pick(d.LocName || d.name) || "GoStation",
+      addr: pick(d.Address || d.address),
+      city: pick(d.City) + pick(d.District),
+      time: pick(d.AvailableTime || d.availableTime),
+      state: d.State
+    });
+  }
+  return out;
+}
+function useStations(list, srcLabel){
+  stations = list;
+  updateDataInfo(srcLabel);
+  drawStations();
+  updateList();
+}
+function updateDataInfo(src){
+  var t = +load(CACHE_TIME);
+  $("dataInfo").textContent = "目前有 " + stations.length + " 個站點" +
+    (t ? ",資料更新於 " + new Date(t).toLocaleString("zh-TW") : "") + (src ? "(" + src + ")" : "");
+}
+function fetchWithTimeout(url, ms){
+  var ctl = ("AbortController" in window) ? new AbortController() : null;
+  var timer = setTimeout(function(){ ctl && ctl.abort(); }, ms);
+  return fetch(url, {signal: ctl ? ctl.signal : undefined, cache:"no-store"})
+    .then(function(r){ clearTimeout(timer); if (!r.ok) throw new Error("HTTP " + r.status); return r.text(); })
+    .then(function(t){ return JSON.parse(t); });
+}
+function download(){
+  setStatus("下載站點資料中…");
+  var i = 0;
+  function next(){
+    if (i >= SOURCES.length) return Promise.reject(new Error("all sources failed"));
+    var url = SOURCES[i++];
+    return fetchWithTimeout(url, 15000).then(function(json){
+      var list = normalize(json);
+      if (list.length < 100) throw new Error("too few");
+      store(CACHE_KEY, JSON.stringify(list));
+      store(CACHE_TIME, String(Date.now()));
+      return list;
+    }).catch(function(){ return next(); });
+  }
+  return next();
+}
+function initData(){
+  var cached = null;
+  try{ cached = JSON.parse(load(CACHE_KEY) || "null"); }catch(e){}
+  if (cached && cached.length){
+    useStations(cached, "已存在手機");
+    if (Date.now() - (+load(CACHE_TIME) || 0) > REFRESH_MS){
+      download().then(function(l){ useStations(l, "剛更新"); }).catch(function(){});
+    }
+  } else {
+    download().then(function(l){ useStations(l, "剛下載"); })
+      .catch(function(){
+        setStatus("站點下載失敗,請到設定匯入");
+        $("dlg").classList.add("show");
+      });
+  }
+}
+
+// ---------- drawing (only what is on screen) ----------
+var drawPending = false;
+function drawStations(){
+  if (drawPending) return; drawPending = true;
+  requestAnimationFrame(function(){
+    drawPending = false;
+    stationLayer.clearLayers();
+    if (!stations.length) return;
+    var b = map.getBounds().pad(0.25), z = map.getZoom();
+    var icons = z >= 14, r = z >= 13 ? 6 : 4, cap = icons ? 400 : 1500;
+    var n = 0;
+    for (var i=0;i<stations.length;i++){
+      var s = stations[i];
+      if (!b.contains([s.lat, s.lng])) continue;
+      if (++n > cap) break;
+      var m = icons
+        ? L.marker([s.lat, s.lng], {icon:boltIcon, keyboard:false})
+        : L.circleMarker([s.lat, s.lng], {renderer:renderer, radius:r, weight:1.5, color:"#ffffff", fillColor:"#1b1f24", fillOpacity:1});
+      m.bindPopup(popupHtml(s), {autoPan:false}).addTo(stationLayer);
+    }
+  });
+}
+function esc(t){ return String(t).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+function navUrl(s){ return "https://www.google.com/maps/dir/?api=1&travelmode=driving&destination=" + s.lat + "," + s.lng; }
+function popupHtml(s){
+  var d = here ? " · " + fmtDist(distM(here, s)) : "";
+  return "<b>" + esc(s.name) + "</b>" + d + "<br><span class='muted'>" + esc(s.addr || s.city) + "</span>" +
+    (s.time ? "<br>營業:" + esc(s.time) : "") + "<br><a href='" + navUrl(s) + "' target='_blank' rel='noopener'>導航前往 →</a>";
+}
+map.on("moveend zoomend", drawStations);
+
+// ---------- geo math ----------
+var R = 6371000, rad = Math.PI/180;
+function distM(a, b){
+  var dLat=(b.lat-a.lat)*rad, dLng=(b.lng-a.lng)*rad;
+  var x=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(a.lat*rad)*Math.cos(b.lat*rad)*Math.sin(dLng/2)*Math.sin(dLng/2);
+  return 2*R*Math.asin(Math.sqrt(x));
+}
+function bearing(a, b){
+  var y=Math.sin((b.lng-a.lng)*rad)*Math.cos(b.lat*rad);
+  var x=Math.cos(a.lat*rad)*Math.sin(b.lat*rad)-Math.sin(a.lat*rad)*Math.cos(b.lat*rad)*Math.cos((b.lng-a.lng)*rad);
+  return (Math.atan2(y,x)/rad+360)%360;
+}
+function fmtDist(m){ return m < 1000 ? Math.round(m/10)*10 + " m" : (m/1000).toFixed(m < 10000 ? 1 : 0) + " km"; }
+
+// ---------- location tracking ----------
+var here = null, heading = null, prevFix = null, follow = true;
+var listMode = prefs.listMode || "near", watchId = null, lastFixAt = 0, demoTimer = null;
+
+function onFix(lat, lng, acc, spd, hdg){
+  var p = {lat:lat, lng:lng};
+  // compute heading ourselves when the device doesn't give one
+  if ((hdg == null || isNaN(hdg)) && prevFix && distM(prevFix, p) > 8) hdg = bearing(prevFix, p);
+  if (!prevFix || distM(prevFix, p) > 8) prevFix = p;
+  if (hdg != null && !isNaN(hdg) && (spd == null || spd > 1)) heading = hdg;
+  here = p; lastFixAt = Date.now();
+
+  if (!meMarker){
+    meMarker = L.marker([lat,lng], {icon:meIcon, interactive:false, zIndexOffset:1000}).addTo(map);
+    accCircle = L.circle([lat,lng], {radius:acc||20, color:"#2f8cff", weight:1, fillOpacity:.08, interactive:false}).addTo(map);
+  } else { meMarker.setLatLng([lat,lng]); accCircle.setLatLng([lat,lng]).setRadius(acc||20); }
+
+  var arrow = document.getElementById("meArrow");
+  if (arrow){
+    if (heading != null){ arrow.style.display = "block"; arrow.style.transform = "rotate(" + heading + "deg)"; }
+    else arrow.style.display = "none";
+  }
+  if (follow) map.panTo([lat,lng], {animate:true, duration:0.5, noMoveStart:true});
+
+  $("speed").textContent = (spd != null && !isNaN(spd) ? Math.round(spd*3.6) : "—") + " km/h";
+  setStatus("定位中 · 精準度 " + Math.round(acc||0) + " m");
+  prefs.last = [lat, lng];
+  if (!onFix.saved || Date.now() - onFix.saved > 30000){ onFix.saved = Date.now(); savePrefs(); }
+  throttledList();
+}
+var listT = 0;
+function throttledList(){ if (Date.now() - listT > 2000){ listT = Date.now(); updateList(); } }
+
+function startWatch(){
+  if (!("geolocation" in navigator)){ setStatus("這個瀏覽器不支援定位"); return; }
+  if (watchId != null) navigator.geolocation.clearWatch(watchId);
+  watchId = navigator.geolocation.watchPosition(function(pos){
+    if (demoTimer) return;
+    var c = pos.coords;
+    onFix(c.latitude, c.longitude, c.accuracy, c.speed, c.heading);
+  }, function(err){
+    if (err.code === 1) setStatus("請允許定位權限(設定 → 瀏覽器 → 位置)");
+    else setStatus("定位訊號弱,重試中…");
+  }, {enableHighAccuracy:true, maximumAge:1000, timeout:20000});
+}
+// watchdog: some phones silently stop sending updates; restart the watch
+setInterval(function(){
+  if (!demoTimer && document.visibilityState === "visible" && lastFixAt && Date.now() - lastFixAt > 25000){
+    setStatus("重新連接定位…"); startWatch(); lastFixAt = Date.now();
+  }
+}, 10000);
+document.addEventListener("visibilitychange", function(){
+  if (document.visibilityState === "visible"){ startWatch(); requestWake(); }
+});
+
+
+// ---------- list ----------
+function updateList(){
+  var ul = $("list");
+  if (!stations.length){ ul.innerHTML = '<li class="empty">尚無站點資料</li>'; return; }
+  var ref = here || {lat:map.getCenter().lat, lng:map.getCenter().lng};
+  var ahead = listMode === "ahead" && here && heading != null;
+  $("listTitle").textContent = ahead ? "前方換電站(行進方向)" : (here ? "離你最近的換電站" : "地圖中心附近換電站");
+  $("modeBtn").textContent = listMode === "ahead" ? "切換:最近" : "切換:前方";
+  var cand = [];
+  for (var i=0;i<stations.length;i++){
+    var s = stations[i];
+    if (Math.abs(s.lat-ref.lat) > 0.15 || Math.abs(s.lng-ref.lng) > 0.15) continue;
+    var d = distM(ref, s);
+    if (ahead && d > 60){
+      var diff = Math.abs(((bearing(ref, s) - heading) + 540) % 360 - 180);
+      if (diff > 40) continue;
+    }
+    cand.push({s:s, d:d});
+  }
+  cand.sort(function(a,b){ return a.d-b.d; });
+  cand = cand.slice(0, 6);
+  if (!cand.length){ ul.innerHTML = '<li class="empty">' + (ahead ? "前方 15 公里內沒有站點" : "附近沒有站點") + '</li>'; return; }
+  ul.innerHTML = "";
+  cand.forEach(function(c){
+    var li = document.createElement("li");
+    li.innerHTML = '<span class="dist">' + fmtDist(c.d) + '</span><span class="nm"><b>' + esc(c.s.name) +
+      '</b><small>' + esc(c.s.addr || c.s.city) + '</small></span><a class="go" target="_blank" rel="noopener" href="' + navUrl(c.s) + '">導航</a>';
+    li.addEventListener("click", function(e){
+      if (e.target.closest("a")) return;
+      setFollow(false);
+      map.setView([c.s.lat, c.s.lng], Math.max(map.getZoom(), 16));
+      L.popup({autoPan:false}).setLatLng([c.s.lat, c.s.lng]).setContent(popupHtml(c.s)).openOn(map);
+    });
+    ul.appendChild(li);
+  });
+}
+$("modeBtn").onclick = function(){
+  listMode = listMode === "ahead" ? "near" : "ahead"; prefs.listMode = listMode; savePrefs(); updateList();
+};
+
+// ---------- follow controls ----------
+function setFollow(on){
+  follow = on; $("followBtn").classList.toggle("on", on);
+  if (on && here) map.setView([here.lat, here.lng], Math.max(map.getZoom(), 15));
+}
+map.on("dragstart", function(){ setFollow(false); });
+$("followBtn").onclick = function(){ setFollow(true); };
+map.on("moveend", function(){ if (!here) throttledList(); });
+
+// ---------- screen wake lock ----------
+var wakeLock = null;
+function requestWake(){
+  if (!$("wakeChk").checked || !("wakeLock" in navigator) || document.visibilityState !== "visible") return;
+  navigator.wakeLock.request("screen").then(function(l){ wakeLock = l; }).catch(function(){});
+}
+$("wakeChk").checked = prefs.wake !== false;
+$("wakeChk").onchange = function(){
+  prefs.wake = this.checked; savePrefs();
+  if (this.checked) requestWake(); else if (wakeLock){ wakeLock.release().catch(function(){}); wakeLock = null; }
+};
+document.addEventListener("click", function once(){ requestWake(); document.removeEventListener("click", once); });
+
+// ---------- settings dialog ----------
+$("menuBtn").onclick = function(){ updateDataInfo(); $("dlg").classList.add("show"); };
+$("closeDlg").onclick = function(){ $("dlg").classList.remove("show"); };
+$("dlg").addEventListener("click", function(e){ if (e.target === this) this.classList.remove("show"); });
+$("reloadBtn").onclick = function(){
+  $("dataInfo").textContent = "下載中…";
+  download().then(function(l){ useStations(l, "剛更新"); setStatus("站點已更新"); })
+    .catch(function(){ $("dataInfo").textContent = "下載失敗,請改用「匯入 JSON 檔」"; });
+};
+$("fileIn").onchange = function(){
+  var f = this.files && this.files[0]; if (!f) return;
+  var rd = new FileReader();
+  rd.onload = function(){
+    try{
+      var list = normalize(JSON.parse(rd.result));
+      if (!list.length) throw new Error("empty");
+      store(CACHE_KEY, JSON.stringify(list)); store(CACHE_TIME, String(Date.now()));
+      useStations(list, "匯入"); setStatus("已匯入 " + list.length + " 個站點");
+    }catch(e){ $("dataInfo").textContent = "檔案格式看不懂,請確認是 Gogoro 站點清單"; }
+  };
+  rd.readAsText(f);
+};
+
+// ---------- demo ride (for testing without moving) ----------
+$("demoBtn").onclick = function(){
+  $("dlg").classList.remove("show");
+  if (demoTimer){ clearInterval(demoTimer); demoTimer = null; this.textContent = "模擬騎車(測試)"; startWatch(); return; }
+  this.textContent = "停止模擬";
+  var c = here || {lat:map.getCenter().lat, lng:map.getCenter().lng}, h = 45, lat = c.lat, lng = c.lng, t = 0;
+  setFollow(true);
+  demoTimer = setInterval(function(){
+    t++; if (t % 15 === 0) h = (h + 70) % 360;
+    var step = 11 / R / rad; // ~11 m per second ≈ 40 km/h
+    lat += step * Math.cos(h*rad); lng += step * Math.sin(h*rad) / Math.cos(lat*rad);
+    onFix(lat, lng, 8, 11, h);
+  }, 1000);
+};
+
+// expose for automated testing
+window.__gs = {onFix:onFix, useStations:useStations, normalize:normalize, state:function(){ return {follow:follow, here:here, heading:heading, n:stations.length, center:map.getCenter()}; }};
+
+initData();
+startWatch();
+})();
+</script>
+</body>
+</html>
