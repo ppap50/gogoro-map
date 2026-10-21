@@ -1,13 +1,11 @@
-##### official-site-pro
-`zh-TW`,fallbackLocale:`zh-TW`,messages:Wv,silentTranslationWarn:!0,silentFallbackWarn:!0}),XT=e=>{let t=JT[e];if(!t){let n=e.split(`-`)[0];n===`zh`?t=`zh-TW`:n===`en`&&(t=`en-US`)}YT.global.locale.value=t,J.locale(t)},ZT=Nm.create({baseURL:`https://official-site-pro.gogoroapp.com/`}),QT=async()=>(await ZT.get(`PartnerService/Gogoro/GetVmList?offset=0&pageSize=10000`)).data.Data,$T=async e=>(await ZT.get(`PartnerService/Gogoro/GetGoStationImages?VmId=${e}`)).data.map(e=>e.URL),eE={"zh-TW":{fullTime:`24 小時營業`,tom
-##### gogoroapp.com
-cale:`zh-TW`,messages:Wv,silentTranslationWarn:!0,silentFallbackWarn:!0}),XT=e=>{let t=JT[e];if(!t){let n=e.split(`-`)[0];n===`zh`?t=`zh-TW`:n===`en`&&(t=`en-US`)}YT.global.locale.value=t,J.locale(t)},ZT=Nm.create({baseURL:`https://official-site-pro.gogoroapp.com/`}),QT=async()=>(await ZT.get(`PartnerService/Gogoro/GetVmList?offset=0&pageSize=10000`)).data.Data,$T=async e=>(await ZT.get(`PartnerService/Gogoro/GetGoStationImages?VmId=${e}`)).data.map(e=>e.URL),eE={"zh-TW":{fullTime:`24 小時營業`,tomorrow:`明日`,wee
-##### data/findus
-w C,swapCount:new w,swapCountAvg30Days:new ee,rackCount:new T},{get:function(e,t,n){return O.boostrap(),Reflect.get(e,t,n)}})),document.readyState===`loading`?document.addEventListener(`DOMContentLoaded`,m):m(),O})}))(),1),kE=`https://cdn.gogoro.com/data/findus-cluster.json`,AE=`https://cdn.gogoro.com/data/findus-shops.json`,jE=Pm.default.chain(cE.state).pick([`station`,`shop`,`service`,`super-station`,`promo`,`quick_service`]).keys().first().value(),$=Cd({state:()=>({shops:[],stations:[],promoCenters:[],q
-##### apiDomain
-##### /vm
-IHQDiNIlpkadUVEUlPl9CroW3lGxgdy4pclWvKTePLqiLoUCLKAK6qKAovvNEajPLQWUxwFAp2nNxKgLgy3KkvcAqFHCKbgxS7OeMd/0Jc5koCNKREo6IkgY18onSt3TCxFLRxTpVDM59iWcdr+sUwAFNEo4kb+0NIJKrUl0Wt2msfCnSZPTku8y0YEgDfWgAPQGjETWcE5JFHSMBdAb0DLlAqZFhm0KVmu9zb8aACo2Wb3B7HOtl5RmrW/vmPnuNrSUma+YuXqS/iRp8oeeuzYDZEk9aACaBo5633TOUg9hyLkCsKnGx4RwClKVjXtmthyyqsFIgC4pjZ9VXK1Wq4oXN+LQalfMy9VqY9MjnSQN3fEiE20sUAwc3Aj9Adk46ssB50gBuj8g0/hsSrSnxoVCpFvCqRZNAl7j07A04parr9rVtb1n/uryLevnin8g8zXdxIv8p0iTz/ioELqJWeU+MGSTkso1P5IwJE2/TUamrPOE6B5H4Q0
-##### swap-station
-##### station/list
-##### /stations
-##### getStation
+HTTP/2 200 
+date: Wed, 21 Oct 2026 01:59:29 GMT
+content-type: application/json; charset=utf-8
+content-length: 3835474
+server: Apache/2.4.7 (Unix) OpenSSL/1.0.1e
+x-powered-by: ASP.NET
+access-control-allow-origin: *
+
+<class 'dict'> ['Data', 'TotalCount']
+4036
+[{"Id": "c66679cb-6a5e-4b01-8d97-7568d44d3dbd", "RId": "TW1156401C", "LocName": {"en-US": "Taipei Nangang Water Pressurized Station", "zh-TW": "臺北市南港自來水加壓站C"}, "GroupId": 3137, "GoStationSiteId": "d3PW1Re1", "Latitude": 25.048139, "Longitude": 121.61718, "ZipCode": "11564", "Address": {"en-US": "No. 1, Sec. 2, Academia Rd., Nangang Dist., Taipei City", "zh-TW": "臺北市南港區研究院路二段1號(近大坑街/研究院路二段3巷之間)"}, "District": {"en-US": "Nangang Dist.", "zh-TW": "南港區"}, "City": {"en-US": "Taipei City", "zh-TW": "台北市"}, "AvailableTimeByte": "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", "State": 1, "StorePhoto": ["https://cdn.gogoro.com/resources/images/gostations/TW1156401C_01.jpg", "https://cdn.gogoro.com/resources/images/gostations/TW1156401C_02.jpg", "https://cdn.gogoro.com/resources/images/gostations/TW1156401C_03.jpg"], "StartTime": null, "EndTime": null, "RackA": 1, "RackB": 2, "ReasonType": null, "VmType": 1}, {"Id": "80af4552-258d-4f2f-b665-935500539dda", "RId": "TW3346401A", "LocName": {"en-US": "CPC Jiadung GS", "zh-TW": "中油茄苳加油站"}, "GroupId": 1254, "GoStationSiteId": "6XeVgW3L", "Latitude": 24.977043, "Longitude": 121.269632, "ZipCode": "33464", "Address": {"en-US": "No.575, Zhonghua Rd., Bade Dist., Taoyuan City", "zh-TW": "桃園市八德區茄苳里中華路575號(近中華路/永豐路交叉口)"}, "District": {"en-US": "Bade Dist.", "zh-TW": "八德區"}, "City": {"en-US": "Taoyuan City", "zh-TW": "桃園市"}, "AvailableTimeByte": "FFFFFFFF000FFFFFFFFF000FFFFFFFFF000FFFFFFFFF000FFFFFFFFF000FFFFFFFFF000FFFFFFFFF000F", "State": 1, "StorePhoto": ["https://cdn.gogoro.com/resources/images/gostations/TW3346401A_01.jpg", "https://cdn.gogoro.com/resources/images/gostations/TW3346401A_02.jpg", "https://cdn.gogoro.com/resources/images/gostations/TW3346401A_03.jpg"], "StartTime": null, "EndTime": null, "RackA": 1, "RackB": 4, "ReasonType": null, "VmType": 1}]
