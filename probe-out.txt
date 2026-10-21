@@ -1,50 +1,16 @@
-=== https://network.gogoro.com/tw/
-src="/assets/main-D5xextB-.js"
-src="/assets/main-PsSE1d01.js"
-href="/assets/slickless-D9hOKctA.js"
-src="//cdn.gogoro.com/libs/packages/network-components/2-latest/network-components.min.js"
-src="/assets/main-CjdtgDzQ.js"
-href="/assets/debounce-BZPOS9BN.js"
-href="/assets/lottie-DOrjKWnD.js"
-href="/assets/slickless-D9hOKctA.js"
---- https://network.gogoro.com/assets/main-D5xextB-.js 1793
-https://www.gogoro.com/api/geo
-https://www.gogoro.com/in/
---- https://network.gogoro.com/assets/main-PsSE1d01.js 508
---- https://cdn.gogoro.com/libs/packages/network-components/2-latest/network-components.min.js 179449
-".concat(_s.apiDomain,"
-".concat(this.apiDomain,"
-"/api/me responded "
-"GoStation®"
-"apiDomain"
-"https://api.apifly.io/tables/vX94P6i8qYS1yX8C/rows"
-http://www.w3.org/1998/Math/MathML
-http://www.w3.org/1999/xlink
-http://www.w3.org/2000/svg
-https://api.apifly.io/tables/vX94P6i8qYS1yX8C/rows
-https://bit.ly/2ZqJzkp
-https://network-support.gogoro.com/
-https://techatbot-gogoronetwork.tonii.cc/Scripts/temcs_chat_client_gogoro.js
-https://techatbot-gogoronetwork.tonii.cc/Styles/te_ts_clientChat_gogoro_o.css
-https://techatbot-gogoronetwork.tonii.cc/Styles/te_ts_clientChat_shrink.css
---- https://network.gogoro.com/assets/main-CjdtgDzQ.js 57133
-=== https://www.gogoro.com/tw/gogoro-network/
+=== https://www.gogoro.com/tw/findus/
 src="//code.jquery.com/jquery-3.6.0.min.js"
 src="//cdn.gogoro.com/libs/ggr-components/8-latest/ggr-components.min.js?v=f9f01c8507d7e3b45871c497199134a971849a5c4445db7ec967042554bd504e"
-src="//cdn.jsdelivr.net/npm/lottie-web@5.5.7"
-src="/assets/gogoro-network-tw/main-e3b8eb93.js"
+src="//cdn.gogoro.com/libs/ggr-find-us/latest/ggr-find-us.min.js"
 --- https://code.jquery.com/jquery-3.6.0.min.js 89501
 --- https://cdn.gogoro.com/libs/ggr-components/8-latest/ggr-components.min.js?v=f9f01c8507d7e3b45871c497199134a971849a5c4445db7ec967042554bd504e 450052
-".concat(this.apiDomain,"
 "/api/me responded "
 "/tw/event/2022swap/"
 "/tw/findus/?station"
 "GoStation® and Smart Battery"
 "apiDomain"
-"capitalize"
 "https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;700;900&display=swap"
 "https://www.gogoro.com/api/geo"
-"in e?e.children.toLowerCase():e,capitalize:(e,t)=>"
 http://promotion.gogoro.com/
 http://www.bohemiancoding.com/sketch
 http://www.w3.org/1998/Math/MathML
@@ -52,55 +18,60 @@ http://www.w3.org/1999/xlink
 http://www.w3.org/2000/svg
 https://bit.ly/37hvlKK
 https://castrolmobility.com/vi
-https://cdn.gogoro.com/fonts/flama/Flama-Book.otf
-https://cdn.gogoro.com/fonts/flama/Flama-Book.woff
-https://cdn.gogoro.com/fonts/flama/Flama-Light.otf
-https://cdn.gogoro.com/fonts/flama/Flama-Light.woff
-https://cdn.gogoro.com/fonts/flama/FlamaCondensed-Basic.eot
-https://cdn.gogoro.com/fonts/flama/FlamaCondensed-Basic.svg
-https://cdn.gogoro.com/fonts/flama/FlamaCondensed-Basic.woff
-https://cdn.gogoro.com/fonts/flama/FlamaCondensed-Black.eot
-https://cdn.gogoro.com/fonts/flama/FlamaCondensed-Black.svg
-https://cdn.gogoro.com/fonts/flama/FlamaCondensed-Black.woff
-https://cdn.gogoro.com/fonts/flama/FlamaCondensed-Bold.eot
-https://cdn.gogoro.com/fonts/flama/FlamaCondensed-Bold.svg
-https://cdn.gogoro.com/fonts/flama/FlamaCondensed-Bold.ttf
-https://cdn.gogoro.com/fonts/flama/FlamaCondensed-Bold.woff
-https://cdn.gogoro.com/fonts/flama/FlamaCondensed-Book.eot
-https://cdn.gogoro.com/fonts/flama/FlamaCondensed-Book.svg
-https://cdn.gogoro.com/fonts/flama/FlamaCondensed-Book.woff
-https://cdn.gogoro.com/fonts/flama/FlamaCondensed-Extrabold.eot
-https://cdn.gogoro.com/fonts/flama/FlamaCondensed-Extrabold.svg
-https://cdn.gogoro.com/fonts/flama/FlamaCondensed-Extrabold.woff
-https://cdn.gogoro.com/fonts/flama/FlamaCondensed-Light.eot
-https://cdn.gogoro.com/fonts/flama/FlamaCondensed-Light.svg
-https://cdn.gogoro.com/fonts/flama/FlamaCondensed-Light.woff
-https://cdn.gogoro.com/fonts/flama/FlamaCondensed-Medium.eot
-https://cdn.gogoro.com/fonts/flama/FlamaCondensed-Medium.svg
-https://cdn.gogoro.com/fonts/flama/FlamaCondensed-Medium.woff
-https://cdn.gogoro.com/fonts/flama/FlamaCondensed-Semibold.eot
-https://cdn.gogoro.com/fonts/flama/FlamaCondensed-Semibold.svg
-https://cdn.gogoro.com/fonts/flama/FlamaCondensed-Semibold.woff
-https://cdn.gogoro.com/fonts/flama/FlamaSemicondensed-Basic.eot
-https://cdn.gogoro.com/fonts/flama/FlamaSemicondensed-Basic.svg
-https://cdn.gogoro.com/fonts/flama/FlamaSemicondensed-Basic.woff
-https://cdn.gogoro.com/fonts/flama/FlamaSemicondensed-Black.eot
---- https://cdn.jsdelivr.net/npm/lottie-web@5.5.7 250147
+https://cdn.gogoro.com/libs/ggr
+https://inquire.gogoro.com/tw/inquire
+https://investor.gogoro.com/
+https://network.gogoro.com/tw/
+https://promotion.gogoro.com/tw/
+https://promotion.gogoro.com/tw/gov
+https://promotion.gogoro.com/tw/subscription/
+https://reserve.gogoro.com/
+https://shop.gogoro.com/
+https://store.gogoro.com/tw/legal/SmartscooterPurchaseAgreement_1001
+https://support.gogoro.com/en/
+https://support.gogoro.com/en/faq/
+https://support.gogoro.com/en/manual/collections/7879070047644964/
+https://support.gogoro.com/tw/
+https://support.gogoro.com/tw/faq
+https://support.gogoro.com/tw/giftquery
+https://support.gogoro.com/tw/giftquery/
+https://support.gogoro.com/tw/how
+https://twitter.com/WeAreGogoro
+https://vuejs.org/error
+https://www.facebook.com/GogoroIndia/
+https://www.facebook.com/GogoroTaiwan
+https://www.facebook.com/gogoro
+https://www.gogoro.com/api/geo
+https://www.gogoro.com/cookie
+https://www.gogoro.com/privacy
+https://www.gogoro.com/tw/explore
+https://www.gogoro.com/tw/privacy
+https://www.gogoro.com/tw/rewards/
+https://www.instagram.com/gogoro_in/
+https://www.instagram.com/gogoro_taiwan/
+https://www.linkedin.com/company/gogoro
+https://www.ridegoshare.com/
+--- https://cdn.gogoro.com/libs/ggr-find-us/latest/ggr-find-us.min.js 691606
+":{searchBar:{placeholder:{station:`Find a nearby GoStation®`,"
+":{searchBar:{placeholder:{station:`尋找 GoStation®`,"
+"https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;700;900&display=swap"
+http://momentjs.com/guides/
+http://www.w3.org/1998/Math/MathML
 http://www.w3.org/1999/xlink
 http://www.w3.org/2000/svg
-http://www.w3.org/XML/1998/namespace
---- https://www.gogoro.com/assets/gogoro-network-tw/main-e3b8eb93.js 151490
-",new Proxy({stationsCount:new _,comingStationsCount:new g,onlineStationsCount:new y,CO2:new w,KM:new b,swapCount:new x,swapCountAvg30Days:new O,rackCount:new T},{get:function(t,e,n){return E.boostrap(),Reflect.get(t,e,n)}})),"
-".gostation-map-animation-container"
-".station-close-btn"
-".station-feature"
-".station-feature-animation-container"
-".station-features .cta-btn"
-"//cdn.gogoro.com/network/switch/animation/gostation-map-en.json"
-"//cdn.gogoro.com/network/switch/animation/gostation-map.json"
-"station-popup-open"
-http://www.w3.org/1999/xhtml
-http://www.w3.org/2000/svg
-https://cdn.gogoro.com/data/environmental-impact-v3.json
-https://cdn.gogoro.com/data/subsidy.json
+https://api.apifly.io/tables/1rq19mAHusw4bUie
+https://api.apifly.io/tables/3zF3F6HiiGxbdEj5
+https://cdn.gogoro.com/data/environmental
+https://cdn.gogoro.com/data/findus
+https://maps.googleapis.com/maps/api/js
+https://next.vuex.vuejs.org/
+https://npms.io/search
+https://official-site-pro.gogoroapp.com/
+https://vuejs.org/error
+https://vuejs.org/images/icons/favicon
+https://www.gogoro.com/privacy
+https://www.gogoro.com/terms
+https://www.gogoro.com/tw/privacy
+https://www.gogoro.com/tw/terms
+https://www.google.com.tw/maps/dir//
 "application/ld+json"
